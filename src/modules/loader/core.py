@@ -9,23 +9,29 @@ class FileHandler():
         self.file_loaded = False
         
     def load_file(self, file_name: str) -> DataFrame:
-        path = FILE_PATH / file_name
-        logger.debug(f"file path: {path}")
-        dataframe = pd.read_csv(path, sep=";")
-        if not dataframe.empty:
-            logger.info(f"loaded file: {file_name}")
-            self.file_loaded = True
-            logger.debug(dataframe)
-            return dataframe
+        if file_name.endswith(".csv"):
+            path = FILE_PATH / file_name
+            logger.debug(f"file path: {path}")
+            dataframe = pd.read_csv(path, sep=";")
+            if not dataframe.empty:
+                logger.info(f"loaded file: {file_name}")
+                self.file_loaded = True
+                logger.debug(dataframe)
+                return dataframe
+            else:
+                logger.warning(f"File: {file_name} is invalid")
+                raise FileNotFoundError
         else:
-            logger.warning(f"File: {file_name} is invalid")
-            raise FileNotFoundError
+            raise ValueError("Invalid file format")
         
     def save_file(self, dataframe: DataFrame, file_name: str):
-        path = FILE_PATH / file_name
-        logger.debug(f"saving data to file: {file_name}")
-        dataframe.to_csv(path, sep=';', encoding='utf-8')
-        logger.debug(f"file path: {path}")
+        if file_name.endswith(".csv"):
+            path = FILE_PATH / file_name
+            logger.debug(f"saving data to file: {file_name}")
+            dataframe.to_csv(path, sep=';', encoding='utf-8')
+            logger.debug(f"file path: {path}")
+        else:
+            raise ValueError("Invalid file format")
     
     def check_if_file_exists(self, file_name: str) -> bool:
         path: Path = FILE_PATH / file_name

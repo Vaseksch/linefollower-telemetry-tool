@@ -48,7 +48,11 @@ class mainApp(ctk.CTk):
         file_name = self.file_name_entry.get()
         if len(file_name) > 0:
             if self.Mbox("Load new file?", "Are you sure you want to load new file, unsaved data will be lost", 1) == 1:
-                self.dataframe = self.file_handler.load_file(file_name=file_name)
+                try:
+                    self.dataframe = self.file_handler.load_file(file_name=file_name)
+                except ValueError:
+                    logger.error("Invalid file format")
+                    self.Mbox("ERROR", "Enter valid file name. File name must end with .csv", 0x0 | 0x10)
                 self.textbox.delete("0.0")
                 self.textbox.insert("0.0", self.dataframe.to_string())
         else:
@@ -58,6 +62,8 @@ class mainApp(ctk.CTk):
         if self.Mbox("Load new file?", "Are you sure you want to load new data, unsaved data will be lost", 1) == 1:
             try:
                 self.dataframe = read_serial_data()
+                self.textbox.delete("0.0")
+                self.textbox.insert("0.0", self.dataframe.to_string())
             except PortNotOpenError:
                 self.Mbox("ERROR", "No device found.", 0x0 | 0x10)
     
@@ -65,9 +71,18 @@ class mainApp(ctk.CTk):
         file_name = self.file_name_entry.get()
         if len(file_name) > 0:
             if not self.file_handler.check_if_file_exists(file_name=file_name):
-                self.file_handler.save_file(dataframe=self.dataframe, file_name=file_name)
+                try:
+                    self.file_handler.save_file(dataframe=self.dataframe, file_name=file_name)
+                except ValueError:
+                    logger.error("Invalid file format")
+                    self.Mbox("ERROR", "Enter valid file name. File name must end with .csv", 0x0 | 0x10)
+                    
             elif self.Mbox("Owerwrite file?", "File with this name already exists are you sure you want to over write it?", 1) == 1:
-                self.file_handler.save_file(dataframe=self.dataframe, file_name=file_name)
+                try:
+                    self.file_handler.save_file(dataframe=self.dataframe, file_name=file_name)
+                except ValueError:
+                    logger.error("Invalid file format")
+                    self.Mbox("ERROR", "Enter valid file name. File name must end with .csv", 0x0 | 0x10)
             else:
                 logger.error("An ERROR occured while saving the file")
         
