@@ -1,0 +1,65 @@
+import customtkinter as ctk
+from ..loader.core import FileHandler
+from modules.serial.core import read_serial_data
+from pandas import DataFrame
+from .const import APP_SIZE_RATIO
+from loguru import logger
+import ctypes
+from serial import PortNotOpenError
+
+class mainApp(ctk.CTk):
+    def __init__(self, file_handler: FileHandler):
+        super().__init__()
+        self.geometry(self.get_screen_size())
+        
+        self.file_handler = file_handler
+        self.dataframe: DataFrame
+        
+        self.grid_rowconfigure(2, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid
+        
+        self.robot_connect_button = ctk.CTkButton(self, text="Load robot data", command=self.load_robot_data)
+        self.robot_connect_button.grid(row=0, column=0, padx=40, pady=20, sticky="ew", columnspan=3)
+        
+        self.load_button = ctk.CTkButton(self, text="Load file", command=self.load_file)
+        self.load_button.grid(row=1, column=1, padx=(10, 10), sticky="ew")
+        
+        self.save_button = ctk.CTkButton(self, text="Save file", command=...)
+        self.save_button.grid(row=1, column=2, padx=(10, 40), sticky="ew")
+        
+        self.file_name_entry = ctk.CTkEntry(self, placeholder_text="enter valid file name")
+        self.file_name_entry.grid(row=1, column=0, padx=(40, 10), sticky="ew")
+        
+        self.textbox = ctk.CTkTextbox(master=self, width=400, corner_radius=0)
+        self.textbox.grid(row=2, column=0, padx=40, pady=20, sticky="nsew", columnspan=3)
+        
+    def get_screen_size(self):
+        screen_size_x = int(self.winfo_screenwidth() * APP_SIZE_RATIO)
+        screen_size_y = int(self.winfo_screenheight() * APP_SIZE_RATIO)
+        
+        
+        screen_dimensions = f"{screen_size_x}x{screen_size_y}"
+        logger.debug(screen_dimensions)
+        
+        return screen_dimensions
+    
+    def load_file(self):
+        file_name = self.file_name_entry.get()
+        if len(file_name) > 0:
+            if self.Mbox("Load new file?", "Are you sure you want to load new file, unsaved data will be lost", 1) == 1:
+                self.dataframe = self.file_handler.load_file(file_name=file_name)
+                self.textbox.delete("0.0")
+                self.textbox.insert("0.0", self.dataframe.to_string())
+        else:
+            self.Mbox("Warning", "Invalid file name", 0x0 | 0x10)
+    
+    def load_robot_data(self):
+        if self.Mbox("Load new file?", "Are you sure you want to load new data, unsaved data will be lost", 1) == 1:
+            try:
+                self.dataframe = read_serial_data()
+            except PortNotOpenError:
+                self.Mbox("ERROR", "No device found.", 0x0 | 0x10)
+            
+    def Mbox(self, title, text, style):
+        return ctypes.windll.user32.MessageBoxW(0, text, title, style)

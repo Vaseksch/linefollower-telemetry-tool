@@ -1,0 +1,1 @@
+APP_SIZE_RATIO = 0.5
