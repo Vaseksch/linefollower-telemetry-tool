@@ -7,4 +7,4 @@ Telemetry tool for my line follower project. Load, visualize and save robot run 
 - Load and save data from CSV files
 - Plot any combination of telemetry columns
 
-![img](image-1.png)
+![img](image-2.png)
