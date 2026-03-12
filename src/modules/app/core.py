@@ -5,6 +5,7 @@ from pandas import DataFrame
 from .const import APP_SIZE_RATIO
 from loguru import logger
 import ctypes
+from matplotlib import pyplot as plt
 from serial import PortNotOpenError
 
 class mainApp(ctk.CTk):
@@ -33,6 +34,15 @@ class mainApp(ctk.CTk):
         
         self.textbox = ctk.CTkTextbox(master=self, width=400, corner_radius=0)
         self.textbox.grid(row=2, column=0, padx=40, pady=20, sticky="nsew", columnspan=3)
+        
+        self.x_axis_entry = ctk.CTkEntry(self, placeholder_text="enter X axis")
+        self.x_axis_entry.grid(row=3, column=0, padx=(40, 10), pady=20, sticky="e")
+        
+        self.y_axis_entry = ctk.CTkEntry(self, placeholder_text="enter Y axis")
+        self.y_axis_entry.grid(row=3, column=1, padx=10, pady=20, sticky="e")
+        
+        self.plot_button = ctk.CTkButton(self, text="Show plot", command=self.plot_dataset)
+        self.plot_button.grid(row=3, column=2, padx=(10, 40), pady=20, sticky="ew")
         
     def get_screen_size(self):
         screen_size_x = int(self.winfo_screenwidth() * APP_SIZE_RATIO)
@@ -88,3 +98,15 @@ class mainApp(ctk.CTk):
         
     def Mbox(self, title, text, style):
         return ctypes.windll.user32.MessageBoxW(0, text, title, style)
+    
+    def plot_dataset(self):
+        x_param = self.x_axis_entry.get()
+        y_param = self.y_axis_entry.get()
+        
+        x_data = self.dataframe[x_param]
+        y_data = self.dataframe[y_param]
+        
+        plt.plot(x_data, y_data)
+        plt.grid(which='minor', linewidth=0.3)
+        plt.minorticks_on()
+        plt.show()
