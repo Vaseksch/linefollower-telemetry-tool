@@ -25,7 +25,7 @@ class mainApp(ctk.CTk):
         self.load_button = ctk.CTkButton(self, text="Load file", command=self.load_file)
         self.load_button.grid(row=1, column=1, padx=(10, 10), sticky="ew")
         
-        self.save_button = ctk.CTkButton(self, text="Save file", command=...)
+        self.save_button = ctk.CTkButton(self, text="Save file", command=self.save_file)
         self.save_button.grid(row=1, column=2, padx=(10, 40), sticky="ew")
         
         self.file_name_entry = ctk.CTkEntry(self, placeholder_text="enter valid file name")
@@ -60,6 +60,16 @@ class mainApp(ctk.CTk):
                 self.dataframe = read_serial_data()
             except PortNotOpenError:
                 self.Mbox("ERROR", "No device found.", 0x0 | 0x10)
-            
+    
+    def save_file(self):
+        file_name = self.file_name_entry.get()
+        if len(file_name) > 0:
+            if not self.file_handler.check_if_file_exists(file_name=file_name):
+                self.file_handler.save_file(dataframe=self.dataframe, file_name=file_name)
+            elif self.Mbox("Owerwrite file?", "File with this name already exists are you sure you want to over write it?", 1) == 1:
+                self.file_handler.save_file(dataframe=self.dataframe, file_name=file_name)
+            else:
+                logger.error("An ERROR occured while saving the file")
+        
     def Mbox(self, title, text, style):
         return ctypes.windll.user32.MessageBoxW(0, text, title, style)
