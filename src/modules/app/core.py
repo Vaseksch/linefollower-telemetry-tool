@@ -12,6 +12,7 @@ class mainApp(ctk.CTk):
     def __init__(self, file_handler: FileHandler):
         super().__init__()
         self.geometry(self.get_screen_size())
+        self.title("LapLog")
         
         self.file_handler = file_handler
         self.dataframe: DataFrame
