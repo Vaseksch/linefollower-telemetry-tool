@@ -22,19 +22,22 @@ class mainApp(ctk.CTk):
         self.grid
         
         self.robot_connect_button = ctk.CTkButton(self, text="Load robot data", command=self.load_robot_data)
-        self.robot_connect_button.grid(row=0, column=0, padx=40, pady=20, sticky="ew", columnspan=3)
+        self.robot_connect_button.grid(row=0, column=0, padx=40, pady=20, sticky="ew", columnspan=4)
         
         self.load_button = ctk.CTkButton(self, text="Load file", command=self.load_file)
         self.load_button.grid(row=1, column=1, padx=(10, 10), sticky="ew")
         
         self.save_button = ctk.CTkButton(self, text="Save file", command=self.save_file)
-        self.save_button.grid(row=1, column=2, padx=(10, 40), sticky="ew")
+        self.save_button.grid(row=1, column=2, padx=(10, 10), sticky="ew")
+        
+        self.excel_button = ctk.CTkButton(self, text="Open with Excel", command=self.open_with_excel)
+        self.excel_button.grid(row=1, column=3, padx=(10, 40), sticky="ew")
         
         self.file_name_entry = ctk.CTkEntry(self, placeholder_text="enter valid file name")
         self.file_name_entry.grid(row=1, column=0, padx=(40, 10), sticky="ew")
         
         self.textbox = ctk.CTkTextbox(master=self, width=400, corner_radius=0)
-        self.textbox.grid(row=2, column=0, padx=40, pady=20, sticky="nsew", columnspan=3)
+        self.textbox.grid(row=2, column=0, padx=40, pady=20, sticky="nsew", columnspan=4)
         
         self.x_axis_entry = ctk.CTkEntry(self, placeholder_text="enter X axis")
         self.x_axis_entry.grid(row=3, column=0, padx=(40, 10), pady=20, sticky="e")
@@ -86,14 +89,14 @@ class mainApp(ctk.CTk):
                     self.file_handler.save_file(dataframe=self.dataframe, file_name=file_name)
                 except ValueError:
                     logger.error("Invalid file format")
-                    self.Mbox("ERROR", "Enter valid file name. File name must end with .csv", 0x0 | 0x10)
+                    self.Mbox("ERROR", "Enter valid file name. File name must end with .csv or .xlsx", 0x0 | 0x10)
                     
             elif self.Mbox("Owerwrite file?", "File with this name already exists are you sure you want to over write it?", 1) == 1:
                 try:
                     self.file_handler.save_file(dataframe=self.dataframe, file_name=file_name)
                 except ValueError:
                     logger.error("Invalid file format")
-                    self.Mbox("ERROR", "Enter valid file name. File name must end with .csv", 0x0 | 0x10)
+                    self.Mbox("ERROR", "Enter valid file name. File name must end with .csv or .xlsx", 0x0 | 0x10)
             else:
                 logger.error("An ERROR occured while saving the file")
         
@@ -111,3 +114,11 @@ class mainApp(ctk.CTk):
         plt.grid(which='minor', linewidth=0.3)
         plt.minorticks_on()
         plt.show()
+        
+    def open_with_excel(self):
+        file_name = self.file_name_entry.get()
+        if len(file_name) > 0:
+            if self.file_handler.check_if_file_exists(file_name=file_name):
+                self.file_handler.launch_excel(file_name=file_name)
+        else:
+            logger.error("Invalid file format")

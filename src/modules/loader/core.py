@@ -3,6 +3,7 @@ from pandas import DataFrame
 from pathlib import Path
 from .const import FILE_PATH
 from loguru import logger
+import os
 
 class FileHandler():
     def __init__(self):
@@ -30,6 +31,11 @@ class FileHandler():
             logger.debug(f"saving data to file: {file_name}")
             dataframe.to_csv(path, sep=';', encoding='utf-8')
             logger.debug(f"file path: {path}")
+        elif file_name.endswith(".xlsx"):
+            path = FILE_PATH / file_name
+            logger.debug(f"saving data to file: {file_name}")
+            dataframe.to_excel(path)
+            logger.debug(f"file path: {path}")
         else:
             raise ValueError("Invalid file format")
     
@@ -40,3 +46,6 @@ class FileHandler():
             return True
         else:
             return False
+        
+    def launch_excel(self, file_name: str):
+        os.system(f"start EXCEL.EXE {str(FILE_PATH / file_name)}")
