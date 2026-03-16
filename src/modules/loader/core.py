@@ -22,6 +22,18 @@ class FileHandler():
             else:
                 logger.warning(f"File: {file_name} is invalid")
                 raise FileNotFoundError
+        if file_name.endswith(".xlsx"):
+            path = FILE_PATH / file_name
+            logger.debug(f"file path: {path}")
+            dataframe = pd.read_excel(path)
+            if not dataframe.empty:
+                logger.info(f"loaded file: {file_name}")
+                self.file_loaded = True
+                logger.debug(dataframe)
+                return dataframe
+            else:
+                logger.warning(f"File: {file_name} is invalid")
+                raise FileNotFoundError
         else:
             raise ValueError("Invalid file format")
         

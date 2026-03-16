@@ -1,9 +1,11 @@
 from modules.loader.core import FileHandler
 from modules.app.core import mainApp
+from modules.analysis.core import Analyzer
 
 def main():
     file_handler = FileHandler()
-    main_app = mainApp(file_handler=file_handler)
+    analyzer = Analyzer()
+    main_app = mainApp(file_handler=file_handler, analyzer=analyzer)
     
     main_app.mainloop()
     

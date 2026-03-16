@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from ..loader.core import FileHandler
 from modules.serial.core import read_serial_data
+from modules.analysis.core import Analyzer
 from pandas import DataFrame
 from .const import APP_SIZE_RATIO
 from loguru import logger
@@ -9,13 +10,14 @@ from matplotlib import pyplot as plt
 from serial import PortNotOpenError
 
 class mainApp(ctk.CTk):
-    def __init__(self, file_handler: FileHandler):
+    def __init__(self, file_handler: FileHandler, analyzer: Analyzer):
         super().__init__()
         self.geometry(self.get_screen_size())
         self.title("LapLog")
         
         self.file_handler = file_handler
         self.dataframe: DataFrame
+        self.analyzer = analyzer
         
         self.grid_rowconfigure(2, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -71,6 +73,7 @@ class mainApp(ctk.CTk):
                 self.textbox.insert("0.0", self.dataframe.to_string())
         else:
             self.Mbox("Warning", "Invalid file name", 0x0 | 0x10)
+        self.analyzer.calculate_ziegler_nichols(self.dataframe, 28)
     
     def load_robot_data(self):
         if self.Mbox("Load new file?", "Are you sure you want to load new data, unsaved data will be lost", 1) == 1:
