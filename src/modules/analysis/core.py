@@ -37,7 +37,7 @@ class Analyzer():
         
         return period
     
-    def calculate_ziegler_nichols(self, dataframe: DataFrame, ku):
+    def calculate_ziegler_nichols(self, dataframe: DataFrame, ku) -> tuple[float, float]:
         fft_period = self.analyse_data_fft(dataframe) / 10e5
         logger.debug(fft_period)
         acf_period = self.analyse_data_acf(dataframe) / 10e4
@@ -52,5 +52,7 @@ class Analyzer():
         logger.debug(f"KD ACF: {kd_acf}")
         logger.debug(f"KD FFT: {kd_fft}")
         logger.debug(f"KD COMBINED: {kd_combined}")
+        
+        return kp, kd_combined
         
         

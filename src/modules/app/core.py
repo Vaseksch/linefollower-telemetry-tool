@@ -41,14 +41,23 @@ class mainApp(ctk.CTk):
         self.textbox = ctk.CTkTextbox(master=self, width=400, corner_radius=0)
         self.textbox.grid(row=2, column=0, padx=40, pady=20, sticky="nsew", columnspan=4)
         
+        self.ku_entry = ctk.CTkEntry(self, placeholder_text="enter Ku")
+        self.ku_entry.grid(row=3, column=0, padx=(40, 10), pady=20, sticky="e")
+        
+        self.label = ctk.CTkLabel(self, text="KP: Null, KD: Null", fg_color="transparent")
+        self.label.grid(row=3, column=1, padx=10, pady=20, sticky="e")
+        
+        self.analysis_button = ctk.CTkButton(self, text="Calculate KD, KU", command=self.run_analysis)
+        self.analysis_button.grid(row=3, column=2, padx=(10, 40), pady=20, sticky="ew")
+        
         self.x_axis_entry = ctk.CTkEntry(self, placeholder_text="enter X axis")
-        self.x_axis_entry.grid(row=3, column=0, padx=(40, 10), pady=20, sticky="e")
+        self.x_axis_entry.grid(row=4, column=0, padx=(40, 10), pady=20, sticky="e")
         
         self.y_axis_entry = ctk.CTkEntry(self, placeholder_text="enter Y axis")
-        self.y_axis_entry.grid(row=3, column=1, padx=10, pady=20, sticky="e")
+        self.y_axis_entry.grid(row=4, column=1, padx=10, pady=20, sticky="e")
         
         self.plot_button = ctk.CTkButton(self, text="Show plot", command=self.plot_dataset)
-        self.plot_button.grid(row=3, column=2, padx=(10, 40), pady=20, sticky="ew")
+        self.plot_button.grid(row=4, column=2, padx=(10, 40), pady=20, sticky="ew")
         
     def get_screen_size(self):
         screen_size_x = int(self.winfo_screenwidth() * APP_SIZE_RATIO)
@@ -73,7 +82,6 @@ class mainApp(ctk.CTk):
                 self.textbox.insert("0.0", self.dataframe.to_string())
         else:
             self.Mbox("Warning", "Invalid file name", 0x0 | 0x10)
-        self.analyzer.calculate_ziegler_nichols(self.dataframe, 28)
     
     def load_robot_data(self):
         if self.Mbox("Load new file?", "Are you sure you want to load new data, unsaved data will be lost", 1) == 1:
@@ -125,3 +133,9 @@ class mainApp(ctk.CTk):
                 self.file_handler.launch_excel(file_name=file_name)
         else:
             logger.error("Invalid file format")
+            
+    def run_analysis(self):
+        ku = float(self.ku_entry.get())
+        kp, kd = self.analyzer.calculate_ziegler_nichols(self.dataframe, ku)
+        
+        self.label.configure(text=f"KP: {kp:.3f}, KD: {kd:.3f}")
