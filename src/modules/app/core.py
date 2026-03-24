@@ -47,7 +47,7 @@ class mainApp(ctk.CTk):
         self.label = ctk.CTkLabel(self, text="KP: Null, KD: Null", fg_color="transparent")
         self.label.grid(row=3, column=1, padx=10, pady=20, sticky="e")
         
-        self.analysis_button = ctk.CTkButton(self, text="Calculate KD, KU", command=self.run_analysis)
+        self.analysis_button = ctk.CTkButton(self, text="Calculate KP, KD", command=self.run_analysis)
         self.analysis_button.grid(row=3, column=2, padx=(10, 40), pady=20, sticky="ew")
         
         self.x_axis_entry = ctk.CTkEntry(self, placeholder_text="enter X axis")
