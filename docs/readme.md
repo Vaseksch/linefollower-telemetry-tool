@@ -12,4 +12,4 @@ Telemetry tool for my line [Linefollower](https://github.com/Vaseksch/linefollow
 - Read, write and open `.xlsx` files directly within the application, or launch them instantly in Excel
 - Calculate PID gains (Kp, Kd) from recorded run data using the Ziegler-Nichols method
 
-<img width="650" height="428" alt="Obrázek2" src="https://github.com/user-attachments/assets/6e10f307-b17d-458f-acb0-2864871e609e" />
+![img](image.png)
